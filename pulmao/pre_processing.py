@@ -70,18 +70,37 @@ def preprocess(flag):
                 # show(type, new_img)
                 file_name = "gaussian_nodules.csv"
 
-            else:
+            elif(flag == 3):
                 # print("Median Blur")
                 new_img = preprocess_median(img)
                 # show(type, new_img)
                 file_name = "median_nodules.csv"
+            else:
+                # convert image to LAB color model
+                image_lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+
+                # split the image into L, A, and B channels
+                l_channel, a_channel, b_channel = cv2.split(image_lab)
+                # apply CLAHE to lightness channel
+                clahe = cv2.createCLAHE(clipLimit=3, tileGridSize=(8, 8))
+                cl = clahe.apply(l_channel)
+
+                # merge the CLAHE enhanced L channel with the original A and B channel
+                merged_channels = cv2.merge((cl, a_channel, b_channel))
+
+                # convert iamge from LAB color model back to RGB color model
+                final_image = cv2.cvtColor(merged_channels, cv2.COLOR_LAB2BGR)
+                new_img = final_image
+                #show(lung, new_img)
+                file_name = "clahe_nodules.csv"
+
 
             resized_image = imutils.resize(new_img, width=80, height=80)
             fd, hog_image = hog(resized_image, orientations=8, pixels_per_cell=(16, 16), cells_per_block=(1, 1),
                                 visualize=True,
                                 feature_vector=True)
-
-
+            #LBP
+            #Clahe filtro
             fd = fd.tolist()
             fd.append(number[lung])
             file_list.append(fd)
@@ -93,6 +112,8 @@ print("Trheshold")
 preprocess(1)
 print("Gaussian Blur")
 preprocess(2)
-"""
 print("Median Blur")
 preprocess(3)
+"""
+print("Clahe")
+preprocess(4)

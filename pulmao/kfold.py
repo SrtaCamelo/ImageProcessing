@@ -326,4 +326,5 @@ def experiment(dataset):
 
 #experiment("gaussian_nodules.csv")
 #experiment("limiarizado_nodules.csv")
-experiment("median_nodules.csv")
+#experiment("median_nodules.csv")
+experiment("clahe_nodules.csv")
